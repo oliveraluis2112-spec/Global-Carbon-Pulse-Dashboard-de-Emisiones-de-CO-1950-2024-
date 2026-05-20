@@ -1,0 +1,91 @@
+{
+    "name": "Global Carbon Pulse - Luis Olivera Vibrant",
+    "dataColors": [
+        "#FF6D00",
+        "#00BFA5",
+        "#0091EA",
+        "#AA00FF",
+        "#FFD600",
+        "#00E676",
+        "#E0F7FA",
+        "#1A1C1E"
+    ],
+    "background": "#F8F9FA",
+    "foreground": "#1A1C1E",
+    "tableAccent": "#00BFA5",
+    "visualStyles": {
+        "*": {
+            "*": {
+                "background": [
+                    {
+                        "show": true,
+                        "color": { "solid": { "color": "#FFFFFF" } },
+                        "transparency": 0
+                    }
+                ],
+                "border": [
+                    {
+                        "show": false
+                    }
+                ],
+                "dropShadow": [
+                    {
+                        "show": true,
+                        "color": { "solid": { "color": "#000000" } },
+                        "position": "Outer",
+                        "preset": "Custom",
+                        "shadowDistance": 4,
+                        "shadowBlur": 20,
+                        "shadowAngle": 90,
+                        "transparency": 95
+                    }
+                ],
+                "title": [
+                    {
+                        "show": true,
+                        "fontFamily": "Inter, Segoe UI",
+                        "fontSize": 12,
+                        "fontColor": { "solid": { "color": "#1A1C1E" } },
+                        "bold": true
+                    }
+                ],
+                "labels": [
+                    {
+                        "fontFamily": "Inter, Segoe UI",
+                        "fontSize": 10,
+                        "fontColor": { "solid": { "color": "#6C757D" } }
+                    }
+                ]
+            }
+        },
+        "page": {
+            "*": {
+                "background": [
+                    {
+                        "color": { "solid": { "color": "#F8F9FA" } },
+                        "transparency": 0
+                    }
+                ]
+            }
+        },
+        "card": {
+            "*": {
+                "labels": [
+                    {
+                        "fontFamily": "Inter, Segoe UI",
+                        "fontSize": 10,
+                        "fontColor": { "solid": { "color": "#6C757D" } }
+                    }
+                ],
+                "cardLabels": [
+                    {
+                        "fontFamily": "Inter, Segoe UI",
+                        "fontSize": 28,
+                        "fontColor": { "solid": { "color": "#1A1C1E" } },
+                        "bold": true
+                    }
+                ]
+            }
+        }
+    }
+}
