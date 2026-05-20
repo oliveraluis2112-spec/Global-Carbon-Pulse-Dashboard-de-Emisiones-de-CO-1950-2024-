@@ -1,0 +1,98 @@
+-- =========================================================================
+-- PROYECTO: Global Carbon Pulse (1950 - 2024)
+-- AUTOR: Luis Olivera
+-- DESCRIPCIÓN: Consultas analíticas para la exploración del dataset de CO2.
+-- =========================================================================
+
+-- -------------------------------------------------------------------------
+-- CONSULTA 1: Top 10 Países con Mayores Emisiones Históricas Acumuladas
+-- Objetivo: Identificar los mayores contribuyentes al CO2 global excluyendo 
+--           las agrupaciones regionales del dataset.
+-- -------------------------------------------------------------------------
+SELECT 
+    country AS pais,
+    ROUND(SUM(co2), 2) AS emisiones_totales_co2
+FROM 
+    DATA
+WHERE 
+    country NOT IN ('World', 'Asia', 'Europe', 'North America', 'South America', 'Africa', 'European Union', 'High-income countries', 'Upper-middle-income countries')
+GROUP BY 
+    country
+ORDER BY 
+    emisiones_totales_co2 DESC
+LIMIT 10;
+
+
+-- -------------------------------------------------------------------------
+-- CONSULTA 2: Evolución Global de Emisiones por Tipo de Combustible por Década
+-- Objetivo: Agrupar los datos temporalmente para analizar qué fuentes de energía 
+--           (carbón, petróleo o gas) han dominado históricamente.
+-- -------------------------------------------------------------------------
+SELECT 
+    (year / 10) * 10 AS decada,
+    ROUND(SUM(coal_co2), 2) AS total_carbon,
+    ROUND(SUM(oil_co2), 2) AS total_petroleo,
+    ROUND(SUM(gas_co2), 2) AS total_gas,
+    ROUND(SUM(cement_co2), 2) AS total_cemento
+FROM 
+    DATA
+WHERE 
+    country = 'World'
+GROUP BY 
+    decada
+ORDER BY 
+    decada DESC;
+
+
+-- -------------------------------------------------------------------------
+-- CONSULTA 3: Análisis de Emisiones Per Cápita en el Último Año Registrado
+-- Objetivo: Encontrar qué países tienen el mayor impacto contaminante por habitante,
+--           lo cual suele dar una perspectiva muy diferente al volumen total.
+-- -------------------------------------------------------------------------
+SELECT 
+    country AS pais,
+    year AS anio,
+    ROUND(co2_per_capita, 4) AS co2_por_persona,
+    ROUND(co2, 2) AS emisiones_totales_anio
+FROM 
+    DATA
+WHERE 
+    year = 2024
+    AND country NOT IN ('World', 'Asia', 'Europe', 'North America', 'South America', 'Africa', 'European Union')
+    AND co2_per_capita IS NOT NULL
+ORDER BY 
+    co2_per_capita DESC
+LIMIT 10;
+
+
+-- -------------------------------------------------------------------------
+-- CONSULTA 4: Países Líderes en Reducción de Emisiones (Año Actual vs Anterior)
+-- Objetivo: Utilizar funciones de ventana (LAG) para aislar y premiar a los 
+--           países que lograron disminuir su huella en el último periodo.
+-- -------------------------------------------------------------------------
+WITH ComparativoAnual AS (
+    SELECT 
+        country AS pais,
+        year AS anio,
+        co2 AS emisiones_actuales,
+        LAG(co2, 1) OVER (PARTITION BY country ORDER BY year) AS emisiones_anio_anterior
+    FROM 
+        DATA
+    WHERE 
+        year IN (2023, 2024)
+        AND country NOT IN ('World', 'Asia', 'Europe', 'North America', 'South America', 'Africa', 'European Union')
+)
+SELECT 
+    pais,
+    emisiones_anio_anterior,
+    emisiones_actuales,
+    ROUND((emisiones_actuales - emisiones_anio_anterior), 2) AS reduccion_absoluta,
+    ROUND(((emisiones_actuales - emisiones_anio_anterior) / emisiones_anio_anterior) * 100, 2) AS porcentaje_cambio
+FROM 
+    ComparativoAnual
+WHERE 
+    anio = 2024 
+    AND emisiones_actuales < emisiones_anio_anterior
+ORDER BY 
+    porcentaje_cambio ASC -- Muestra primero los porcentajes negativos más altos (mayor reducción)
+LIMIT 10;
